@@ -148,7 +148,7 @@ jobs:
           EOF
           
       
-          EOF
+    
 
           cat << 'EOF' > app/src/main/java/com/liquidcraft/colormix/MainActivity.kt
           package com.liquidcraft.colormix
