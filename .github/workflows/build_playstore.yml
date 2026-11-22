@@ -227,7 +227,51 @@ jobs:
               }
 
               inner class AdBridge {
-                  @JavascriptInterface
+                  
+                                  @JavascriptInterface
                   fun showInterstitial() {
                       runOnUiThread {
-                      
+                          mInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                              override fun onAdDismissedFullScreenContent() { mInterstitialAd = null; loadInterstitialAd() }
+                          }
+                          if (mInterstitialAd != null) mInterstitialAd?.show(this@MainActivity)
+                      }
+                  }
+
+                  @JavascriptInterface
+                  fun showRewarded(rewardType: String) {
+                      runOnUiThread {
+                          if (mRewardedAd != null) {
+                              mRewardedAd?.show(this@MainActivity) {
+                                  runOnUiThread {
+                                      val wv = (window.decorView.findViewById<FrameLayout>(android.R.id.content).getChildAt(0) as? FrameLayout)?.getChildAt(0) as? WebView
+                                      wv?.evaluateJavascript("if(window.onNativeReward)window.onNativeReward('$rewardType');", null)
+                                  }
+                              }
+                              mRewardedAd = null; loadRewardedAd()
+                          }
+                      }
+                  }
+              }
+          }
+          EOF
+
+      - name: Setup Gradle Wrapper
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Build Signed Release AAB
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: gradle bundleRelease
+
+      - name: Upload Play Store AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: playstore-signed-aab
+          path: app/build/outputs/bundle/release/app-release.aab
+          
+    
