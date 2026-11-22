@@ -122,6 +122,9 @@ jobs:
           cat << 'EOF' > app/src/main/AndroidManifest.xml
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://android.com">
+                    cat << 'EOF' > app/src/main/AndroidManifest.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://android.com">
               <uses-permission android:name="android.permission.INTERNET" />
               <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
               <application
@@ -144,6 +147,9 @@ jobs:
                   </activity>
               </application>
           </manifest>
+          EOF
+          
+      
           EOF
 
           cat << 'EOF' > app/src/main/java/com/liquidcraft/colormix/MainActivity.kt
